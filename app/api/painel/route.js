@@ -9,7 +9,7 @@ import {
   getFormulaValue,
   diasAPartirDeHoje,
 } from "@/lib/notion";
-
+export const dynamic = "force-dynamic";
 const GERENC_FINALIZADOS = ["Empenhado", "Encaminhado para Pagamento"];
 const LIQ_FINALIZADOS = ["Encaminhado para Pagamento", "Liquidado"];
 
