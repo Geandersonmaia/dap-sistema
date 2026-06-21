@@ -7,6 +7,7 @@ import { usePathname } from "next/navigation";
 const ITENS_MENU = [
   { href: "/painel", label: "Painel Geral", icone: "📊" },
   { href: "/painel/atas", label: "Atas", icone: "📄" },
+  { href: "/painel/implantacoes", label: "Implantações", icone: "🚧" },
   { href: "/painel/gerenciamentos", label: "Gerenciamentos", icone: "🗂️" },
   { href: "/painel/liquidacoes", label: "Liquidação", icone: "💰" },
   { href: "/painel/fornecedores", label: "Fornecedores", icone: "🏢" },
