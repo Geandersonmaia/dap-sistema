@@ -1,22 +1,25 @@
 "use client";
+
 export const dynamic = "force-dynamic";
+
 import { Suspense, useEffect } from "react";
-import { signIn, useSession } from "next-auth/react";
+import { signIn, getSession } from "next-auth/react";
 import { useSearchParams, useRouter } from "next/navigation";
 import Image from "next/image";
 
 function CardLogin() {
   const searchParams = useSearchParams();
   const router = useRouter();
-  const { status } = useSession();
   const erro = searchParams.get("error");
   const callbackUrl = searchParams.get("callbackUrl") || "/painel";
 
   useEffect(() => {
-    if (status === "authenticated") {
-      router.replace(callbackUrl);
-    }
-  }, [status, callbackUrl, router]);
+    getSession().then((session) => {
+      if (session) {
+        router.replace(callbackUrl);
+      }
+    });
+  }, [callbackUrl, router]);
 
   return (
     <div className="flex min-h-screen items-center justify-center bg-gray-50 p-6">
