@@ -1,12 +1,16 @@
 "use client";
 
 import { useState, useRef, useEffect } from "react";
-import { useSession, signOut } from "next-auth/react";
+import { getSession, signOut } from "next-auth/react";
 
 export default function UserMenu() {
-  const { data: session } = useSession();
+  const [session, setSession] = useState(null);
   const [aberto, setAberto] = useState(false);
   const ref = useRef(null);
+
+  useEffect(() => {
+    getSession().then(setSession);
+  }, []);
 
   useEffect(() => {
     function fechar(e) {
