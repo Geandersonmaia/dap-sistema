@@ -104,3 +104,61 @@ export default function PainelGeralPage() {
                   </Pie>
                   <Tooltip />
                 </PieChart>
+              </ResponsiveContainer>
+            </ChartCard>
+
+            <ChartCard titulo="Fornecedores com Mais Pendências">
+              <ResponsiveContainer>
+                <BarChart data={dados.graficos.fornecedoresPendencias} layout="vertical" margin={{ left: 24 }}>
+                  <XAxis type="number" allowDecimals={false} />
+                  <YAxis type="category" dataKey="fornecedor" width={120} tick={{ fontSize: 11 }} />
+                  <Tooltip />
+                  <Bar dataKey="pendencias" fill="#1e3a6e" radius={4} />
+                </BarChart>
+              </ResponsiveContainer>
+            </ChartCard>
+
+            <ChartCard titulo="Atas por Percentual Consumido">
+              <ResponsiveContainer>
+                <BarChart data={dados.graficos.atasPercentualConsumido}>
+                  <XAxis dataKey="ata" tick={{ fontSize: 10 }} interval={0} angle={-20} textAnchor="end" height={50} />
+                  <YAxis unit="%" />
+                  <Tooltip formatter={(v) => `${v.toFixed(0)}%`} />
+                  <Bar dataKey="percentual" fill="#3fa34d" radius={4} />
+                </BarChart>
+              </ResponsiveContainer>
+            </ChartCard>
+
+            <ChartCard titulo="Linha do Tempo de Vencimentos (próximos meses)">
+              <ResponsiveContainer>
+                <LineChart data={dados.graficos.timelineVencimentos}>
+                  <CartesianGrid strokeDasharray="3 3" />
+                  <XAxis dataKey="mes" tick={{ fontSize: 11 }} />
+                  <YAxis allowDecimals={false} />
+                  <Tooltip />
+                  <Line type="monotone" dataKey="quantidade" stroke="#dc2626" strokeWidth={2} />
+                </LineChart>
+              </ResponsiveContainer>
+            </ChartCard>
+          </div>
+
+          <div>
+            <h2 className="mb-3 text-sm font-semibold text-gray-700">
+              Processos Críticos ({dados.processosCriticos.length})
+            </h2>
+            <DataTable
+              exportFilename="processos-criticos"
+              columns={[
+                { key: "tipo", label: "Tipo" },
+                { key: "referencia", label: "Referência" },
+                { key: "detalhe", label: "Detalhe", sortable: false },
+              ]}
+              data={dados.processosCriticos}
+              linhaClasse={(l) => (l.urgencia === 1 ? "bg-red-50" : "")}
+            />
+          </div>
+        </div>
+      )}
+    </DashboardLayout>
+  );
+}
