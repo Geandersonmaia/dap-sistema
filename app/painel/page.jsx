@@ -79,12 +79,16 @@ export default function PainelGeralPage() {
             <StatCard titulo="Pendentes de Recebimento" valor={dados.kpis.pendentesRecebimento} cor="azul" icone="📦" />
             <StatCard
               titulo="Valor Pendente de Liquidação"
+              
               valor={new Intl.NumberFormat("pt-BR", { style: "currency", currency: "BRL" }).format(
                 dados.kpis.valorTotalPendente || 0
               )}
               cor="azul"
               icone="💰"
             />
+            <StatCard titulo="Em Implantação" valor={dados.kpis.implantacoesAndamento} cor="azul" icone="🚧" />
+            <StatCard titulo="Implantações Urgentes" valor={dados.kpis.implantacoesUrgentes} cor="vermelho" icone="🔴" />
+            <StatCard titulo="Total de Implantações" valor={dados.kpis.totalImplantacoes} cor="verde" icone="📋" />
           </div>
 
           <div className="grid grid-cols-1 gap-4 lg:grid-cols-2">
