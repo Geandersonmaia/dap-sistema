@@ -441,6 +441,8 @@ function handleDetected(code) {
   $('codigoShown').textContent = code;
   $('formCard').style.display = '';
   $('descricao').value = '';
+   $('caixas').value = 1;
+  $('itensPorCaixa').value = 1;
   $('quantidade').value = 1;
   $('formCard').scrollIntoView({ behavior: 'smooth', block: 'center' });
   toggleEstadoField();
@@ -451,6 +453,15 @@ $('frente').addEventListener('change', toggleEstadoField);
 function toggleEstadoField() {
   $('estadoWrap').style.display = $('frente').value === 'Patrimônio' ? '' : 'none';
 }
+
+// ---------- Cálculo automático: caixas x itens por caixa ----------
+function recalcQuantidade() {
+  const caixas = parseFloat($('caixas').value) || 0;
+  const porCaixa = parseFloat($('itensPorCaixa').value) || 0;
+  $('quantidade').value = caixas * porCaixa;
+}
+$('caixas').addEventListener('input', recalcQuantidade);
+$('itensPorCaixa').addEventListener('input', recalcQuantidade);
 
 // ---------- Manual entry ----------
 $('toggleManual').addEventListener('click', () => {
