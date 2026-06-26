@@ -389,6 +389,21 @@ function startQuagga() {
   Quagga.onDetected(data => handleDetected(data.codeResult.code));
 }
 
+async function lookupProduct(code) {
+  $('descricao').placeholder = '🔎 Buscando descrição...';
+  try {
+    const res = await fetch(`/api/inventario/lookup?codigo=${encodeURIComponent(code)}`);
+    const data = await res.json();
+    if (data.found && data.descricao) {
+      $('descricao').value = data.descricao;
+      toast(`🔎 Descrição sugerida (${data.fonte}) — confira antes de salvar`);
+    }
+  } catch (e) {}
+  finally {
+    $('descricao').placeholder = 'Ex: Luva de procedimento M';
+  }
+}
+
 function handleDetected(code) {
   const now = Date.now();
   if (code === lastCode && now - lastCodeTime < 2500) return; // debounce
@@ -402,6 +417,7 @@ function handleDetected(code) {
   $('quantidade').value = 1;
   $('formCard').scrollIntoView({ behavior: 'smooth', block: 'center' });
   toggleEstadoField();
+  lookupProduct(code);
 }
 
 $('frente').addEventListener('change', toggleEstadoField);
