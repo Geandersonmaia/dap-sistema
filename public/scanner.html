@@ -137,9 +137,20 @@
       <label>Descrição (opcional)</label>
       <input type="text" id="descricao" placeholder="Ex: Luva de procedimento M">
 
+    <div class="row" style="margin-top:10px;">
+        <div>
+          <label>Nº de caixas</label>
+          <input type="number" id="caixas" value="1" step="any" min="0">
+        </div>
+        <div>
+          <label>Itens por caixa</label>
+          <input type="number" id="itensPorCaixa" value="1" step="any" min="0">
+        </div>
+      </div>
+
       <div class="row" style="margin-top:10px;">
         <div>
-          <label>Quantidade</label>
+          <label>Quantidade total</label>
           <input type="number" id="quantidade" value="1" step="any" min="0">
         </div>
         <div id="estadoWrap" style="display:none;">
