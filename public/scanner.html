@@ -261,12 +261,21 @@ function toast(msg) {
 }
 
 // ---------- Camera / Scanning ----------
+let isStarting = false;
 $('btnCam').addEventListener('click', async () => {
   if (scanning) { stopScanning(); return; }
+  if (isStarting) return;
+  isStarting = true;
+  $('btnCam').disabled = true;
   try {
     stream = await navigator.mediaDevices.getUserMedia({ video: { facingMode: 'environment' } });
     video.srcObject = stream;
-    await video.play();
+    await new Promise(resolve => { video.onloadedmetadata = resolve; });
+    try {
+      await video.play();
+    } catch (playErr) {
+      if (!String(playErr.message).includes('interrupted')) throw playErr;
+    }
     frameEl.style.display = 'block';
     $('camHint').textContent = 'Aponte a câmera para o código de barras...';
     $('btnCam').textContent = '⏹️ Parar câmera';
@@ -285,6 +294,9 @@ $('btnCam').addEventListener('click', async () => {
     startQuagga();
   } catch (err) {
     toast('Não foi possível acessar a câmera: ' + err.message);
+  } finally {
+    isStarting = false;
+    $('btnCam').disabled = false;
   }
 });
 
