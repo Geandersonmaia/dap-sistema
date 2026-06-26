@@ -405,13 +405,17 @@ async function lookupProduct(code) {
   $('descricao').placeholder = '🔎 Buscando descrição...';
   try {
     const res = await fetch(`/api/inventario/lookup?codigo=${encodeURIComponent(code)}`);
+    if (!res.ok) { toast(`⚠️ Erro na busca: HTTP ${res.status}`); return; }
     const data = await res.json();
     if (data.found && data.descricao) {
       $('descricao').value = data.descricao;
       toast(`🔎 Descrição sugerida (${data.fonte}) — confira antes de salvar`);
+    } else {
+      toast('ℹ️ Produto não encontrado nas bases — preencha manualmente.');
     }
-  } catch (e) {}
-  finally {
+  } catch (e) {
+    toast('⚠️ Erro ao buscar: ' + e.message);
+  } finally {
     $('descricao').placeholder = 'Ex: Luva de procedimento M';
   }
 }
