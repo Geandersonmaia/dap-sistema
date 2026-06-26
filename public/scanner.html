@@ -1,0 +1,456 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+<title>Scanner de Inventário — DAP/SEMUSA</title>
+<style>
+  :root{
+    --navy:#1F3864; --navy-dark:#142745; --gold:#BF9000; --gold-light:#E8C547;
+    --green:#2E7D32; --bg:#F4F6FA; --card:#FFFFFF; --text:#1A1A1A; --muted:#6B7280;
+    --danger:#C0392B; --radius:14px;
+  }
+  *{box-sizing:border-box;}
+  body{margin:0;font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Arial,sans-serif;background:var(--bg);color:var(--text);}
+  header{background:linear-gradient(135deg,var(--navy),var(--navy-dark));color:#fff;padding:16px 18px 14px;position:sticky;top:0;z-index:20;box-shadow:0 2px 8px rgba(0,0,0,.15);}
+  header h1{margin:0;font-size:16px;font-weight:700;letter-spacing:.2px;}
+  header p{margin:2px 0 0;font-size:11.5px;color:#C9D4E8;}
+  .tabs{display:flex;background:var(--navy-dark);}
+  .tab{flex:1;text-align:center;padding:11px 0;font-size:13.5px;font-weight:600;color:#9FB1CC;cursor:pointer;border-bottom:3px solid transparent;transition:.15s;}
+  .tab.active{color:#fff;border-bottom-color:var(--gold);}
+  main{padding:14px 14px 90px;max-width:560px;margin:0 auto;}
+  .card{background:var(--card);border-radius:var(--radius);padding:16px;margin-bottom:14px;box-shadow:0 1px 4px rgba(0,0,0,.07);}
+  .card h2{margin:0 0 10px;font-size:13px;color:var(--navy);font-weight:700;text-transform:uppercase;letter-spacing:.4px;}
+  .row{display:flex;gap:10px;margin-bottom:10px;}
+  .row > div{flex:1;}
+  label{display:block;font-size:12px;color:var(--muted);margin-bottom:4px;font-weight:600;}
+  input[type=text],input[type=number],select{
+    width:100%;padding:11px 12px;border:1.5px solid #DDE2EA;border-radius:10px;font-size:15px;background:#FAFBFD;color:var(--text);
+  }
+  input:focus,select:focus{outline:none;border-color:var(--navy);background:#fff;}
+  .btn{display:inline-flex;align-items:center;justify-content:center;gap:6px;width:100%;padding:13px;border-radius:10px;font-size:15px;font-weight:700;border:none;cursor:pointer;transition:.15s;}
+  .btn-primary{background:var(--navy);color:#fff;}
+  .btn-primary:active{background:var(--navy-dark);}
+  .btn-gold{background:var(--gold);color:#fff;}
+  .btn-gold:active{background:#a37a00;}
+  .btn-outline{background:transparent;border:1.5px solid var(--navy);color:var(--navy);}
+  .btn:disabled{opacity:.5;cursor:not-allowed;}
+  #viewport{position:relative;width:100%;border-radius:12px;overflow:hidden;background:#000;aspect-ratio:4/3;}
+  #viewport video,#viewport canvas{position:absolute;top:0;left:0;width:100%;height:100%;object-fit:cover;}
+  .scan-frame{position:absolute;inset:18%;border:3px solid var(--gold-light);border-radius:10px;pointer-events:none;box-shadow:0 0 0 2000px rgba(0,0,0,.25);}
+  .hint{text-align:center;font-size:12px;color:var(--muted);margin-top:8px;}
+  .badge{display:inline-block;padding:3px 9px;border-radius:20px;font-size:11px;font-weight:700;}
+  .badge-ok{background:#E3F4E5;color:var(--green);}
+  .badge-warn{background:#FDECEA;color:var(--danger);}
+  .detected-box{background:#EFF5EA;border:1.5px solid var(--green);border-radius:10px;padding:10px 12px;margin-bottom:12px;display:flex;justify-content:space-between;align-items:center;}
+  .detected-box code{font-size:15px;font-weight:700;color:var(--navy);}
+  .toggle-manual{font-size:12.5px;color:var(--navy);text-decoration:underline;text-align:center;display:block;margin-top:10px;cursor:pointer;}
+  table{width:100%;border-collapse:collapse;font-size:12px;}
+  th,td{padding:7px 6px;border-bottom:1px solid #EEF1F6;text-align:left;}
+  th{color:var(--muted);font-size:10.5px;text-transform:uppercase;background:#FAFBFD;position:sticky;top:0;}
+  td.num{text-align:right;}
+  .empty{text-align:center;color:var(--muted);font-size:13px;padding:30px 0;}
+  .stat-row{display:flex;gap:10px;margin-bottom:12px;}
+  .stat{flex:1;background:#fff;border-radius:10px;padding:10px;text-align:center;box-shadow:0 1px 4px rgba(0,0,0,.06);}
+  .stat .n{font-size:20px;font-weight:800;color:var(--navy);}
+  .stat .l{font-size:10.5px;color:var(--muted);margin-top:2px;}
+  .toolbar{display:flex;gap:8px;margin-bottom:12px;}
+  .toolbar .btn{width:auto;padding:9px 14px;font-size:13px;}
+  .spinner{display:inline-block;width:16px;height:16px;border:2px solid #fff;border-top-color:transparent;border-radius:50%;animation:spin .7s linear infinite;}
+  @keyframes spin{to{transform:rotate(360deg);}}
+  .toast{position:fixed;bottom:18px;left:50%;transform:translateX(-50%);background:var(--navy-dark);color:#fff;padding:11px 18px;border-radius:30px;font-size:13px;box-shadow:0 4px 14px rgba(0,0,0,.25);z-index:50;opacity:0;transition:.25s;pointer-events:none;max-width:90%;text-align:center;}
+  .toast.show{opacity:1;}
+  .table-wrap{max-height:60vh;overflow:auto;border-radius:10px;border:1px solid #EEF1F6;}
+  .del{color:var(--danger);font-size:11px;cursor:pointer;border:none;background:none;padding:0;}
+  .note{font-size:11.5px;color:var(--muted);text-align:center;margin:-4px 0 12px;}
+</style>
+</head>
+<body>
+
+<header>
+  <h1>📦 Scanner de Inventário — DAP/SEMUSA</h1>
+  <p>Inventário Geral 2026 · Ofício-Circular nº 55/2026</p>
+</header>
+
+<div class="tabs">
+  <div class="tab active" data-tab="scan">Escanear</div>
+  <div class="tab" data-tab="table">Registros</div>
+</div>
+
+<main>
+
+  <!-- ===== ABA ESCANEAR ===== -->
+  <section id="tab-scan">
+
+    <div class="card">
+      <h2>Identificação da contagem</h2>
+      <div class="row">
+        <div>
+          <label>Frente</label>
+          <select id="frente">
+            <option value="Consumo">Consumo</option>
+            <option value="Patrimônio">Patrimônio</option>
+          </select>
+        </div>
+        <div>
+          <label>Setor / Área</label>
+          <input type="text" id="setor" placeholder="Ex: Setor 07">
+        </div>
+      </div>
+      <div class="row">
+        <div>
+          <label>Responsável (você)</label>
+          <input type="text" id="responsavel" placeholder="Seu nome">
+        </div>
+      </div>
+    </div>
+
+    <div class="card">
+      <h2>Câmera</h2>
+      <div id="viewport">
+        <video id="video" muted playsinline></video>
+        <canvas id="canvas" style="display:none;"></canvas>
+        <div class="scan-frame" id="frame" style="display:none;"></div>
+      </div>
+      <p class="hint" id="camHint">Toque em "Iniciar câmera" e aponte para o código de barras.</p>
+      <div style="margin-top:10px;">
+        <button class="btn btn-primary" id="btnCam">▶️ Iniciar câmera</button>
+      </div>
+      <span class="toggle-manual" id="toggleManual">Não tem código de barras? Digitar manualmente</span>
+    </div>
+
+    <div class="card" id="formCard" style="display:none;">
+      <h2>Item detectado</h2>
+      <div class="detected-box">
+        <span>Código: <code id="codigoShown">—</code></span>
+        <span class="badge badge-ok">lido</span>
+      </div>
+
+      <input type="hidden" id="codigo">
+
+      <label>Descrição (opcional)</label>
+      <input type="text" id="descricao" placeholder="Ex: Luva de procedimento M">
+
+      <div class="row" style="margin-top:10px;">
+        <div>
+          <label>Quantidade</label>
+          <input type="number" id="quantidade" value="1" step="any" min="0">
+        </div>
+        <div id="estadoWrap" style="display:none;">
+          <label>Estado</label>
+          <select id="estado">
+            <option value="Servível">Servível</option>
+            <option value="Inservível">Inservível</option>
+          </select>
+        </div>
+      </div>
+
+      <div class="row" style="margin-top:6px;">
+        <div><button class="btn btn-gold" id="btnSave">💾 Confirmar e salvar</button></div>
+      </div>
+      <div class="row">
+        <div><button class="btn btn-outline" id="btnCancel">Cancelar / ler outro</button></div>
+      </div>
+    </div>
+
+  </section>
+
+  <!-- ===== ABA REGISTROS ===== -->
+  <section id="tab-table" style="display:none;">
+
+    <div class="stat-row">
+      <div class="stat"><div class="n" id="statTotal">0</div><div class="l">Itens (neste aparelho)</div></div>
+      <div class="stat"><div class="n" id="statPending">0</div><div class="l">Pendentes p/ Notion</div></div>
+    </div>
+    <p class="note">Esta tabela mostra só o que foi escaneado neste aparelho. A visão de todos os aparelhos juntos fica no Notion.</p>
+
+    <div class="toolbar">
+      <button class="btn btn-outline" id="btnRefresh">🔄 Atualizar</button>
+      <button class="btn btn-gold" id="btnSyncPending">☁️ Sincronizar pendentes</button>
+    </div>
+    <div class="toolbar">
+      <button class="btn btn-primary" id="btnExport">⬇️ Exportar CSV</button>
+    </div>
+
+    <div class="card" style="padding:0;">
+      <div class="table-wrap">
+        <table id="tbl">
+          <thead>
+            <tr>
+              <th>Hora</th><th>Frente</th><th>Setor</th><th>Código</th><th>Descrição</th>
+              <th>Qtd</th><th>Estado</th><th>Resp.</th><th>Notion</th><th></th>
+            </tr>
+          </thead>
+          <tbody id="tblBody"></tbody>
+        </table>
+      </div>
+      <div class="empty" id="emptyMsg">Nenhum registro ainda. Escaneie um item na aba "Escanear".</div>
+    </div>
+  </section>
+
+</main>
+
+<div class="toast" id="toast"></div>
+
+<script>
+const API_ENDPOINT = '/api/inventario/scan';
+const STORAGE_KEY = 'dap_inventario_scans';
+
+let stream = null, scanning = false, useNative = false, detector = null, quaggaReady = false;
+let lastCode = '', lastCodeTime = 0;
+
+const $ = id => document.getElementById(id);
+const video = $('video'), canvas = $('canvas'), frameEl = $('frame');
+
+// ---------- Local storage helpers ----------
+function loadLocal() {
+  try { return JSON.parse(localStorage.getItem(STORAGE_KEY) || '[]'); }
+  catch (e) { return []; }
+}
+function saveLocal(arr) {
+  localStorage.setItem(STORAGE_KEY, JSON.stringify(arr));
+}
+
+// ---------- Tabs ----------
+document.querySelectorAll('.tab').forEach(t => {
+  t.addEventListener('click', () => {
+    document.querySelectorAll('.tab').forEach(x => x.classList.remove('active'));
+    t.classList.add('active');
+    $('tab-scan').style.display = t.dataset.tab === 'scan' ? '' : 'none';
+    $('tab-table').style.display = t.dataset.tab === 'table' ? '' : 'none';
+    if (t.dataset.tab === 'table') renderTable();
+  });
+});
+
+// ---------- Toast ----------
+function toast(msg) {
+  const el = $('toast');
+  el.textContent = msg;
+  el.classList.add('show');
+  setTimeout(() => el.classList.remove('show'), 2200);
+}
+
+// ---------- Camera / Scanning ----------
+$('btnCam').addEventListener('click', async () => {
+  if (scanning) { stopScanning(); return; }
+  try {
+    stream = await navigator.mediaDevices.getUserMedia({ video: { facingMode: 'environment' } });
+    video.srcObject = stream;
+    await video.play();
+    frameEl.style.display = 'block';
+    $('camHint').textContent = 'Aponte a câmera para o código de barras...';
+    $('btnCam').textContent = '⏹️ Parar câmera';
+    scanning = true;
+
+    if ('BarcodeDetector' in window) {
+      try {
+        detector = new BarcodeDetector({ formats: ['ean_13','ean_8','code_128','upc_a','upc_e','code_39','qr_code','itf'] });
+        useNative = true;
+        nativeLoop();
+        return;
+      } catch (e) { useNative = false; }
+    }
+    await loadQuagga();
+    startQuagga();
+  } catch (err) {
+    toast('Não foi possível acessar a câmera: ' + err.message);
+  }
+});
+
+function stopScanning() {
+  scanning = false;
+  if (stream) { stream.getTracks().forEach(t => t.stop()); stream = null; }
+  frameEl.style.display = 'none';
+  $('camHint').textContent = 'Toque em "Iniciar câmera" e aponte para o código de barras.';
+  $('btnCam').textContent = '▶️ Iniciar câmera';
+  if (window.Quagga && quaggaReady) { try { Quagga.stop(); } catch(e){} }
+}
+
+async function nativeLoop() {
+  if (!scanning || !useNative) return;
+  try {
+    const codes = await detector.detect(video);
+    if (codes.length) handleDetected(codes[0].rawValue);
+  } catch (e) {}
+  if (scanning) requestAnimationFrame(nativeLoop);
+}
+
+function loadQuagga() {
+  return new Promise((resolve, reject) => {
+    if (window.Quagga) { quaggaReady = true; return resolve(); }
+    const s = document.createElement('script');
+    s.src = 'https://cdnjs.cloudflare.com/ajax/libs/quagga/0.12.1/quagga.min.js';
+    s.onload = () => { quaggaReady = true; resolve(); };
+    s.onerror = () => reject(new Error('Falha ao carregar leitor de código de barras'));
+    document.head.appendChild(s);
+  });
+}
+
+function startQuagga() {
+  Quagga.init({
+    inputStream: { type: 'LiveStream', target: video, constraints: { facingMode: 'environment' } },
+    decoder: { readers: ['ean_reader','ean_8_reader','code_128_reader','upc_reader','upc_e_reader'] },
+    locate: true,
+  }, err => {
+    if (err) { toast('Erro ao iniciar leitor: ' + err.message); return; }
+    Quagga.start();
+  });
+  Quagga.onDetected(data => handleDetected(data.codeResult.code));
+}
+
+function handleDetected(code) {
+  const now = Date.now();
+  if (code === lastCode && now - lastCodeTime < 2500) return; // debounce
+  lastCode = code; lastCodeTime = now;
+  $('codigo').value = code;
+  $('codigoShown').textContent = code;
+  $('formCard').style.display = '';
+  $('descricao').value = '';
+  $('quantidade').value = 1;
+  $('formCard').scrollIntoView({ behavior: 'smooth', block: 'center' });
+  toggleEstadoField();
+}
+
+$('frente').addEventListener('change', toggleEstadoField);
+function toggleEstadoField() {
+  $('estadoWrap').style.display = $('frente').value === 'Patrimônio' ? '' : 'none';
+}
+
+// ---------- Manual entry ----------
+$('toggleManual').addEventListener('click', () => {
+  const code = prompt('Digite o código manualmente:');
+  if (code) handleDetected(code.trim());
+});
+
+// ---------- Save entry ----------
+$('btnCancel').addEventListener('click', () => { $('formCard').style.display = 'none'; });
+
+async function syncToNotion(entry) {
+  const res = await fetch(API_ENDPOINT, {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify(entry),
+  });
+  if (!res.ok) throw new Error('HTTP ' + res.status);
+  return true;
+}
+
+$('btnSave').addEventListener('click', async () => {
+  const responsavel = $('responsavel').value.trim();
+  const setor = $('setor').value.trim();
+  if (!responsavel || !setor) { toast('Preencha Responsável e Setor antes de salvar.'); return; }
+
+  const entry = {
+    id: 'scan_' + Date.now() + '_' + Math.random().toString(36).slice(2,8),
+    timestamp: new Date().toISOString(),
+    frente: $('frente').value,
+    setor,
+    codigo: $('codigo').value,
+    descricao: $('descricao').value.trim(),
+    quantidade: parseFloat($('quantidade').value) || 0,
+    estado: $('frente').value === 'Patrimônio' ? $('estado').value : '',
+    responsavel,
+    notion_synced: false,
+  };
+
+  const arr = loadLocal();
+  arr.push(entry);
+  saveLocal(arr);
+
+  $('btnSave').disabled = true;
+  $('btnSave').innerHTML = '<span class="spinner"></span> Salvando...';
+  try {
+    await syncToNotion(entry);
+    entry.notion_synced = true;
+    saveLocal(arr.map(e => e.id === entry.id ? entry : e));
+    toast('✅ Salvo e sincronizado com o Notion!');
+  } catch (e) {
+    toast('⚠️ Salvo neste aparelho — sem conexão com o Notion agora. Sincronize depois.');
+  } finally {
+    $('btnSave').disabled = false;
+    $('btnSave').innerHTML = '💾 Confirmar e salvar';
+    $('formCard').style.display = 'none';
+  }
+});
+
+// ---------- Registros / table ----------
+function renderTable() {
+  const arr = loadLocal().sort((a,b) => a.timestamp.localeCompare(b.timestamp));
+  const body = $('tblBody');
+  body.innerHTML = '';
+  if (!arr.length) {
+    $('emptyMsg').style.display = '';
+  } else {
+    $('emptyMsg').style.display = 'none';
+  }
+  let pending = 0;
+  arr.forEach(data => {
+    if (!data.notion_synced) pending++;
+    const tr = document.createElement('tr');
+    const hora = new Date(data.timestamp).toLocaleTimeString('pt-BR', {hour:'2-digit', minute:'2-digit'});
+    const statusBadge = data.notion_synced
+      ? '<span class="badge badge-ok">✓ Notion</span>'
+      : '<span class="badge badge-warn">pendente</span>';
+    tr.innerHTML = `<td>${hora}</td><td>${data.frente}</td><td>${esc(data.setor)}</td>
+      <td>${esc(data.codigo)}</td><td>${esc(data.descricao)}</td>
+      <td class="num">${data.quantidade}</td><td>${esc(data.estado||'-')}</td>
+      <td>${esc(data.responsavel)}</td><td>${statusBadge}</td>
+      <td><button class="del" data-id="${data.id}">excluir</button></td>`;
+    body.appendChild(tr);
+  });
+  $('statTotal').textContent = arr.length;
+  $('statPending').textContent = pending;
+
+  body.querySelectorAll('.del').forEach(btn => {
+    btn.addEventListener('click', () => {
+      if (!confirm('Excluir este registro (apenas localmente)?')) return;
+      saveLocal(loadLocal().filter(e => e.id !== btn.dataset.id));
+      renderTable();
+    });
+  });
+}
+
+function esc(s) { return (s||'').toString().replace(/[&<>]/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;'}[c])); }
+
+$('btnRefresh').addEventListener('click', renderTable);
+
+$('btnSyncPending').addEventListener('click', async () => {
+  const arr = loadLocal();
+  const pending = arr.filter(e => !e.notion_synced);
+  if (!pending.length) { toast('Nenhum pendente — tudo sincronizado!'); return; }
+  $('btnSyncPending').disabled = true;
+  $('btnSyncPending').innerHTML = '<span class="spinner"></span> Sincronizando...';
+  let ok = 0, fail = 0;
+  for (const entry of pending) {
+    try { await syncToNotion(entry); entry.notion_synced = true; ok++; }
+    catch (e) { fail++; }
+  }
+  saveLocal(arr);
+  $('btnSyncPending').disabled = false;
+  $('btnSyncPending').innerHTML = '☁️ Sincronizar pendentes';
+  toast(`Sincronizados: ${ok} | Falharam: ${fail}`);
+  renderTable();
+});
+
+$('btnExport').addEventListener('click', () => {
+  const arr = loadLocal();
+  if (!arr.length) { toast('Nenhum registro para exportar.'); return; }
+  const header = ['Data/Hora','Frente','Setor','Codigo','Descricao','Quantidade','Estado','Responsavel','Sincronizado_Notion'];
+  const rows = arr.map(data => [
+    new Date(data.timestamp).toLocaleString('pt-BR'),
+    data.frente, data.setor, data.codigo, data.descricao, data.quantidade, data.estado, data.responsavel,
+    data.notion_synced ? 'SIM' : 'NÃO'
+  ]);
+  const csv = [header, ...rows].map(r => r.map(v => `"${(v??'').toString().replace(/"/g,'""')}"`).join(',')).join('\r\n');
+  const blob = new Blob(['\uFEFF' + csv], { type: 'text/csv;charset=utf-8;' });
+  const url = URL.createObjectURL(blob);
+  const a = document.createElement('a');
+  a.href = url; a.download = 'inventario_dap_scans.csv';
+  document.body.appendChild(a); a.click(); document.body.removeChild(a);
+  URL.revokeObjectURL(url);
+});
+
+renderTable();
+</script>
+</body>
+</html>
