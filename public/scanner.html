@@ -288,9 +288,38 @@ $('btnCam').addEventListener('click', async () => {
   }
 });
 
+let autoZoomInterval = null;
+let lastGoodZoom = null;
+let activeTrack = null;
+
+function applyZoom(track, value) {
+  track.applyConstraints({ advanced: [{ zoom: value }] }).catch(() => {});
+  $('zoomVal').textContent = Number(value).toFixed(1) + 'x';
+  $('zoomSlider').value = value;
+}
+
+function clearAutoZoom() {
+  if (autoZoomInterval) { clearInterval(autoZoomInterval); autoZoomInterval = null; }
+}
+
+function startAutoZoom(track, zoomCaps) {
+  clearAutoZoom();
+  const step = (zoomCaps.max - zoomCaps.min) / 8 || 0.3;
+  autoZoomInterval = setInterval(() => {
+    if (!scanning) { clearAutoZoom(); return; }
+    let value = Number($('zoomSlider').value) + step;
+    if (value >= zoomCaps.max) {
+      value = zoomCaps.max;
+      clearAutoZoom();
+    }
+    applyZoom(track, value);
+  }, 1400);
+}
+
 function setupZoom() {
   try {
     const track = stream.getVideoTracks()[0];
+    activeTrack = track;
     const caps = track.getCapabilities ? track.getCapabilities() : {};
     if (caps && caps.zoom) {
       const slider = $('zoomSlider');
@@ -298,17 +327,17 @@ function setupZoom() {
       slider.max = caps.zoom.max;
       slider.step = caps.zoom.step || 0.1;
 
-      // Zoom automático: começa em ~40% da faixa disponível, em vez do mínimo (1x).
-      const autoZoom = caps.zoom.min + (caps.zoom.max - caps.zoom.min) * 0.4;
-      slider.value = autoZoom;
-      track.applyConstraints({ advanced: [{ zoom: autoZoom }] }).catch(() => {});
-      $('zoomVal').textContent = Number(autoZoom).toFixed(1) + 'x';
+      const startZoom = lastGoodZoom != null ? Math.min(lastGoodZoom, caps.zoom.max) : caps.zoom.min;
+      applyZoom(track, startZoom);
       $('zoomWrap').style.display = '';
 
+      // Se a pessoa arrastar manualmente, isso assume o controle e para a busca automática.
       slider.oninput = () => {
-        track.applyConstraints({ advanced: [{ zoom: Number(slider.value) }] }).catch(() => {});
-        $('zoomVal').textContent = Number(slider.value).toFixed(1) + 'x';
+        clearAutoZoom();
+        applyZoom(track, Number(slider.value));
       };
+
+      startAutoZoom(track, caps.zoom);
     } else {
       $('zoomWrap').style.display = 'none';
     }
@@ -319,6 +348,7 @@ function setupZoom() {
 
 function stopScanning() {
   scanning = false;
+  clearAutoZoom();
   if (stream) { stream.getTracks().forEach(t => t.stop()); stream = null; }
   frameEl.style.display = 'none';
   $('zoomWrap').style.display = 'none';
@@ -363,6 +393,8 @@ function handleDetected(code) {
   const now = Date.now();
   if (code === lastCode && now - lastCodeTime < 2500) return; // debounce
   lastCode = code; lastCodeTime = now;
+  clearAutoZoom(); // achou o código nesse zoom — para de aumentar e guarda esse nível
+  lastGoodZoom = Number($('zoomSlider').value);
   $('codigo').value = code;
   $('codigoShown').textContent = code;
   $('formCard').style.display = '';
