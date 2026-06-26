@@ -297,9 +297,14 @@ function setupZoom() {
       slider.min = caps.zoom.min;
       slider.max = caps.zoom.max;
       slider.step = caps.zoom.step || 0.1;
-      slider.value = caps.zoom.min;
-      $('zoomVal').textContent = Number(caps.zoom.min).toFixed(1) + 'x';
+
+      // Zoom automático: começa em ~40% da faixa disponível, em vez do mínimo (1x).
+      const autoZoom = caps.zoom.min + (caps.zoom.max - caps.zoom.min) * 0.4;
+      slider.value = autoZoom;
+      track.applyConstraints({ advanced: [{ zoom: autoZoom }] }).catch(() => {});
+      $('zoomVal').textContent = Number(autoZoom).toFixed(1) + 'x';
       $('zoomWrap').style.display = '';
+
       slider.oninput = () => {
         track.applyConstraints({ advanced: [{ zoom: Number(slider.value) }] }).catch(() => {});
         $('zoomVal').textContent = Number(slider.value).toFixed(1) + 'x';
