@@ -1,0 +1,11 @@
+{
+  "name": "GOA · Missões",
+  "short_name": "GOA Missões",
+  "description": "Acionamento de missões do Grupamento de Operações Aéreas do CBMRO",
+  "start_url": "/",
+  "display": "standalone",
+  "background_color": "#0E2238",
+  "theme_color": "#0E2238",
+  "lang": "pt-BR",
+  "icons": [{ "src": "/icon.svg", "sizes": "any", "type": "image/svg+xml", "purpose": "any maskable" }]
+}
