@@ -1,0 +1,215 @@
+<title>Projeto Goa</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Barlow+Condensed:wght@500;600;700&family=IBM+Plex+Sans:wght@400;500;600&family=IBM+Plex+Mono:wght@400;500&display=swap">
+<style>
+:root{
+  --bg:#F3F5F7; --surface:#FFFFFF; --ink:#13202B; --muted:#5A6874; --line:#D6DDE3;
+  --navy:#0F2A3D; --red:#B3122B; --amber:#C77A00; --ok:#1E7A4C; --soft:#E8EDF1;
+  --display:"Barlow Condensed","Arial Narrow",Arial,sans-serif;
+  --body:"IBM Plex Sans",system-ui,-apple-system,"Segoe UI",sans-serif;
+  --mono:"IBM Plex Mono",ui-monospace,Menlo,Consolas,monospace;
+}
+@media (prefers-color-scheme: dark){
+  :root:not([data-theme="light"]){
+    color-scheme:dark;
+    --bg:#0C151D; --surface:#132230; --ink:#E6ECF1; --muted:#98A7B4; --line:#24384A;
+    --navy:#9EC3DE; --red:#F0546A; --amber:#F2A93B; --ok:#4FC28A; --soft:#1A2D3E;
+  }
+}
+:root[data-theme="dark"]{
+  color-scheme:dark;
+  --bg:#0C151D; --surface:#132230; --ink:#E6ECF1; --muted:#98A7B4; --line:#24384A;
+  --navy:#9EC3DE; --red:#F0546A; --amber:#F2A93B; --ok:#4FC28A; --soft:#1A2D3E;
+}
+*{box-sizing:border-box}
+body{background:var(--bg);color:var(--ink);font-family:var(--body);font-size:15px;line-height:1.55}
+.wrap{max-width:980px;margin:0 auto;padding-inline:16px;padding-block:28px 64px;display:grid;gap:40px}
+h1,h2,h3{font-family:var(--display);text-wrap:balance;margin:0;line-height:1.1;color:var(--navy)}
+h1{font-size:clamp(34px,6vw,52px);font-weight:700;letter-spacing:.01em}
+h2{font-size:28px;font-weight:600}
+h3{font-size:19px;font-weight:600}
+p{margin:0;max-width:68ch}
+.eyebrow{font-family:var(--mono);font-size:12px;letter-spacing:.12em;text-transform:uppercase;color:var(--red)}
+header{display:grid;gap:12px;border-bottom:2px solid var(--navy);padding-bottom:22px}
+.lede{color:var(--muted);font-size:16px}
+.fleet{display:flex;flex-wrap:wrap;gap:8px;margin-top:6px}
+.tail{font-family:var(--mono);font-size:12.5px;border:1px solid var(--line);background:var(--surface);padding:5px 10px;border-radius:4px}
+.tail b{color:var(--red);font-weight:500}
+section{display:grid;gap:16px}
+.note{font-size:13.5px;color:var(--muted)}
+.diagram{background:var(--surface);border:1px solid var(--line);border-radius:6px;padding:16px;overflow-x:auto}
+.diagram pre{margin:0;background:transparent}
+.grid2{display:grid;grid-template-columns:repeat(auto-fit,minmax(260px,1fr));gap:14px}
+.screen{background:var(--surface);border:1px solid var(--line);border-radius:6px;padding:16px;display:grid;gap:8px;align-content:start}
+.screen .tag{font-family:var(--mono);font-size:11.5px;color:var(--muted);letter-spacing:.06em}
+.screen ul{margin:0;padding-left:18px;display:grid;gap:3px;font-size:14px}
+table{border-collapse:collapse;width:100%;font-size:14px;background:var(--surface)}
+.tbl{overflow-x:auto;border:1px solid var(--line);border-radius:6px}
+th,td{text-align:left;padding:9px 12px;border-bottom:1px solid var(--line);vertical-align:top}
+th{font-family:var(--mono);font-size:11.5px;letter-spacing:.08em;text-transform:uppercase;color:var(--muted);font-weight:500;background:var(--soft)}
+tr:last-child td{border-bottom:none}
+td code{font-family:var(--mono);font-size:12.5px}
+.calc{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1fr);gap:18px}
+@media (max-width:720px){.calc{grid-template-columns:1fr}}
+.inputs{background:var(--surface);border:1px solid var(--line);border-radius:6px;padding:16px;display:grid;gap:14px;align-content:start}
+.field{display:grid;gap:4px}
+.field label{font-size:13.5px;font-weight:500}
+.field small{color:var(--muted);font-size:12px}
+.field input{font-family:var(--mono);font-size:15px;padding:8px 10px;border:1px solid var(--line);border-radius:4px;background:var(--bg);color:var(--ink);width:100%}
+.field input:focus-visible{outline:2px solid var(--navy);outline-offset:1px}
+.results{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:10px;align-content:start}
+.kpi{border:1px solid var(--line);border-radius:6px;padding:14px;background:var(--surface);display:grid;gap:2px}
+.kpi .v{font-family:var(--display);font-size:34px;font-weight:700;color:var(--navy);font-variant-numeric:tabular-nums;line-height:1}
+.kpi .l{font-size:12.5px;color:var(--muted)}
+.kpi.hi{border-color:var(--red)}
+.kpi.hi .v{color:var(--red)}
+.warn{border-left:3px solid var(--amber);background:var(--surface);padding:12px 14px;border-radius:0 6px 6px 0;font-size:14px;display:grid;gap:6px}
+.warn b{color:var(--amber)}
+ol.steps{margin:0;padding-left:20px;display:grid;gap:6px;max-width:72ch}
+.pill{display:inline-block;font-family:var(--mono);font-size:11px;padding:1px 7px;border-radius:10px;border:1px solid currentColor}
+.pill.ok{color:var(--ok)} .pill.wait{color:var(--amber)} .pill.no{color:var(--red)}
+</style>
+
+<div class="wrap">
+
+<header>
+  <div class="eyebrow">CBMRO · Grupamento de Operações Aéreas · rascunho v0.1</div>
+  <h1>Projeto Goa</h1>
+  <p class="lede">App para o chefe de operações acionar uma missão aeromédica falando, disparar a convocação no WhatsApp de cada envolvido e acompanhar quem confirmou, sem precisar ligar para ninguém.</p>
+  <div class="fleet">
+    <span class="tail"><b>RESGATE 01</b> · PT-LMU · Baron 58</span>
+    <span class="tail"><b>RESGATE 03</b> · PR-PML · Grand Caravan EX</span>
+    <span class="tail"><b>RESGATE 04</b> · PT-HMW · Esquilo AS350 B</span>
+  </div>
+</header>
+
+<section>
+  <div class="eyebrow">Fluxo da missão</div>
+  <h2>Do acionamento à decolagem</h2>
+  <p class="note">O Márcio só age nos losangos: revisar a missão e escolher um substituto quando alguém recusa. O resto é automático.</p>
+  <div class="diagram">
+<pre class="mermaid">
+flowchart TD
+  A["Pedido chega<br/>(SESAU / regulação)"] --> B["Márcio abre o app<br/>e dita a missão"]
+  B --> C["IA transcreve e preenche:<br/>aeronave, tripulação, origem,<br/>destino, hospital, paciente, horário"]
+  C --> D{"Márcio revisa"}
+  D -- "corrige" --> C
+  D -- "ok" --> E["Anexa prontuário / fotos<br/>(opcional)"]
+  E --> F["Gera texto da missão + PDF"]
+  F --> G["WhatsApp automático<br/>para cada envolvido"]
+  G --> H{"Resposta"}
+  H -- "Confirmo" --> I["Status: confirmado"]
+  H -- "Não posso" --> J{"Márcio escolhe<br/>substituto"}
+  J --> G
+  H -- "Sem resposta em X min" --> K["Lembrete automático<br/>+ alerta no painel"]
+  K --> H
+  I --> L{"Todos<br/>confirmados?"}
+  L -- "não" --> H
+  L -- "sim" --> M["Missão pronta<br/>aviso ao Márcio"]
+  M --> N["Encerramento:<br/>horas de voo, relatório, arquivo"]
+</pre>
+  </div>
+</section>
+
+<section>
+  <div class="eyebrow">Esqueleto do app</div>
+  <h2>Telas</h2>
+  <div class="grid2">
+    <div class="screen"><span class="tag">TELA 1</span><h3>Painel</h3>
+      <ul><li>Missões em andamento e status de cada pessoa: <span class="pill ok">confirmado</span> <span class="pill wait">aguardando</span> <span class="pill no">recusou</span></li><li>Botão grande "Nova missão"</li><li>Situação das aeronaves (disponível / manutenção)</li></ul></div>
+    <div class="screen"><span class="tag">TELA 2</span><h3>Nova missão por voz</h3>
+      <ul><li>Botão de microfone: o Márcio fala a missão</li><li>Opção de digitar, se preferir</li><li>Anexar prontuário, foto ou PDF</li></ul></div>
+    <div class="screen"><span class="tag">TELA 3</span><h3>Revisão</h3>
+      <ul><li>Campos já preenchidos pela IA</li><li>Tripulação escolhida em listas (sem digitar telefone)</li><li>Prévia da mensagem e do PDF</li><li>Botão "Acionar missão"</li></ul></div>
+    <div class="screen"><span class="tag">TELA 4</span><h3>Acompanhamento</h3>
+      <ul><li>Quem recebeu, leu e confirmou, com horário</li><li>"Trocar pessoa": escolhe outro e o app reenvia</li><li>Botão para baixar o PDF da missão</li></ul></div>
+    <div class="screen"><span class="tag">TELA 5</span><h3>Cadastros</h3>
+      <ul><li>Pessoas: nome, posto, função, WhatsApp</li><li>Equipe SESAU: médicos e enfermeiros</li><li>Aeronaves e hospitais de destino</li></ul></div>
+    <div class="screen"><span class="tag">TELA 6</span><h3>Histórico e relatórios</h3>
+      <ul><li>Todas as missões, com filtros</li><li>Horas de voo por aeronave e por piloto</li><li>Painel de ganhos do app (tempo economizado)</li></ul></div>
+  </div>
+</section>
+
+<section>
+  <div class="eyebrow">Banco de dados · Neon Postgres</div>
+  <h2>O que fica guardado</h2>
+  <div class="tbl"><table>
+    <thead><tr><th>Tabela</th><th>Guarda</th></tr></thead>
+    <tbody>
+      <tr><td><code>pessoas</code></td><td>Nome, posto/graduação, função (piloto, copiloto, tripulante, médico, enfermeiro), órgão (CBMRO / SESAU), WhatsApp, ativo/inativo</td></tr>
+      <tr><td><code>aeronaves</code></td><td>Codinome, matrícula, modelo, tipo (asa fixa / rotativa), situação</td></tr>
+      <tr><td><code>hospitais</code></td><td>Nome, cidade, contato</td></tr>
+      <tr><td><code>missoes</code></td><td>Aeronave, origem, destino, hospital, horário previsto, dados do paciente, status, texto gerado, transcrição original</td></tr>
+      <tr><td><code>missao_equipe</code></td><td>Quem foi convocado para qual função, status da resposta e horários de envio e confirmação</td></tr>
+      <tr><td><code>anexos</code></td><td>Prontuários e fotos, em armazenamento privado, com prazo para exclusão</td></tr>
+      <tr><td><code>eventos</code></td><td>Registro de tudo que aconteceu na missão (enviado, confirmou, recusou, trocado). Também alimenta o cálculo de ganhos</td></tr>
+    </tbody>
+  </table></div>
+</section>
+
+<section>
+  <div class="eyebrow">Ganhos estimados</div>
+  <h2>Quanto tempo o Márcio recupera</h2>
+  <p class="note">Os valores iniciais são estimativas a validar com o Márcio. Altere os campos e o resultado recalcula. Depois que o app estiver em uso, a tabela <code>eventos</code> vai medir o tempo real.</p>
+  <div class="calc">
+    <form class="inputs" id="calcForm">
+      <div class="field"><label for="missoes">Missões por mês</label><input id="missoes" type="number" min="0" step="1" value="8"><small>Estimativa inicial</small></div>
+      <div class="field"><label for="minAtual">Minutos de coordenação por missão hoje</label><input id="minAtual" type="number" min="0" step="5" value="90"><small>Ligações, mensagens, contato com a SESAU e substituições</small></div>
+      <div class="field"><label for="minApp">Minutos por missão com o app</label><input id="minApp" type="number" min="0" step="1" value="10"><small>Ditar, revisar e acompanhar o painel</small></div>
+      <div class="field"><label for="pessoas">Pessoas acionadas por missão</label><input id="pessoas" type="number" min="0" step="1" value="5"><small>Piloto, copiloto, tripulante, médico, enfermeiro</small></div>
+      <div class="field"><label for="fora">% das missões fora do expediente</label><input id="fora" type="number" min="0" max="100" step="5" value="50"><small>Noite, madrugada, fim de semana</small></div>
+      <div class="field"><label for="hora">Valor da hora de trabalho (R$)</label><input id="hora" type="number" min="0" step="5" value="125"><small>Estimativa para um Major; ajuste ao valor real</small></div>
+    </form>
+    <div class="results" aria-live="polite">
+      <div class="kpi hi"><span class="v" id="rAno">–</span><span class="l">horas recuperadas por ano</span></div>
+      <div class="kpi"><span class="v" id="rMes">–</span><span class="l">horas recuperadas por mês</span></div>
+      <div class="kpi"><span class="v" id="rDias">–</span><span class="l">dias de trabalho (8 h) por ano</span></div>
+      <div class="kpi"><span class="v" id="rDesc">–</span><span class="l">horas de descanso devolvidas por ano (fora do expediente)</span></div>
+      <div class="kpi"><span class="v" id="rLig">–</span><span class="l">ligações evitadas por ano (estimativa de 2 por pessoa)</span></div>
+      <div class="kpi"><span class="v" id="rValor">–</span><span class="l">valor da hora de trabalho recuperada por ano</span></div>
+    </div>
+  </div>
+  <div class="grid2">
+    <div class="screen"><h3>Qualidade e segurança</h3><ul><li>Mensagem padronizada: ninguém recebe informação incompleta</li><li>Hospital e destino escritos, sem "telefone sem fio"</li><li>Registro de que cada pessoa confirmou, com horário</li></ul></div>
+    <div class="screen"><h3>Gestão</h3><ul><li>Histórico de missões e horas de voo sem planilha manual</li><li>Dados para relatórios ao comando e à SESAU</li><li>Qualquer oficial de sobreaviso consegue acionar pelo mesmo fluxo</li></ul></div>
+  </div>
+</section>
+
+<section>
+  <div class="eyebrow">Pontos a decidir</div>
+  <h2>Antes de programar</h2>
+  <div class="warn"><b>WhatsApp automático</b>O caminho seguro é a API oficial do WhatsApp (Meta Cloud API). Ela exige um número dedicado do GOA, conta Meta Business verificada (idealmente com o CNPJ do CBMRO) e modelos de mensagem aprovados pela Meta. O modelo pode ter os botões "Confirmo" e "Não posso", que atualizam o painel sozinhos. Cada mensagem tem um custo pequeno. APIs não oficiais são mais simples, mas o número pode ser bloqueado, o que é arriscado para uma operação de emergência.</div>
+  <div class="warn"><b>Dados do paciente (LGPD)</b>Dado de saúde é sensível. Sugestão: o WhatsApp leva só o operacional (aeronave, horário, destino, hospital). O prontuário fica num link com acesso restrito, que apenas a equipe médica abre, e os anexos são apagados após um prazo definido.</div>
+  <ol class="steps">
+    <li>Quantas missões por mês, em média, e quanto tempo o Márcio gasta coordenando cada uma?</li>
+    <li>Quem aciona o Márcio: regulação da SESAU, CIOPS ou ligação direta?</li>
+    <li>Existe escala de sobreaviso? O app pode sugerir a tripulação a partir dela.</li>
+    <li>Só o Márcio aciona missões ou outros oficiais também?</li>
+    <li>O CBMRO consegue um chip dedicado e a verificação na Meta para o WhatsApp oficial?</li>
+  </ol>
+</section>
+
+</div>
+
+<script>
+(function(){
+  var ids=["missoes","minAtual","minApp","pessoas","fora","hora"];
+  var fmt=new Intl.NumberFormat("pt-BR",{maximumFractionDigits:0});
+  var brl=new Intl.NumberFormat("pt-BR",{style:"currency",currency:"BRL",maximumFractionDigits:0});
+  function v(id){var n=parseFloat(document.getElementById(id).value);return isFinite(n)&&n>0?n:0}
+  function calc(){
+    var m=v("missoes"),a=v("minAtual"),b=v("minApp"),p=v("pessoas"),f=Math.min(v("fora"),100)/100,h=v("hora");
+    var minMes=Math.max(a-b,0)*m, hMes=minMes/60, hAno=hMes*12;
+    document.getElementById("rMes").textContent=fmt.format(hMes);
+    document.getElementById("rAno").textContent=fmt.format(hAno);
+    document.getElementById("rDias").textContent=fmt.format(hAno/8);
+    document.getElementById("rDesc").textContent=fmt.format(hAno*f);
+    document.getElementById("rLig").textContent=fmt.format(m*p*2*12);
+    document.getElementById("rValor").textContent=brl.format(hAno*h);
+  }
+  document.getElementById("calcForm").addEventListener("input",calc);
+  document.getElementById("calcForm").addEventListener("submit",function(e){e.preventDefault()});
+  calc();
+})();
+</script>
