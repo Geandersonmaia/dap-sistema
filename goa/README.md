@@ -1,6 +1,6 @@
 # GOA · Missões
 
-App de celular para o chefe de operações do Grupamento de Operações Aéreas (GOA/CBMRO)
+App de celular para o chefe de operações do Grupo de Operações Aéreas (GOA/CBMRO)
 acionar uma missão, convocar a equipe pelo WhatsApp e acompanhar quem confirmou.
 
 ## O que a versão 0.1 faz
@@ -16,19 +16,19 @@ acionar uma missão, convocar a equipe pelo WhatsApp e acompanhar quem confirmou
 - **Equipe**: cadastro de pessoas (funções, órgão, WhatsApp) e situação das aeronaves.
 - Tabela `eventos` registra cada passo, para medir o tempo economizado.
 
-## Paleta
+## Visual
 
-| Nome | Hex | Uso |
-|---|---|---|
-| Noite | `#0E2238` | Cabeçalho, cartão da missão (céu noturno / cabine) |
-| Vermelho bombeiro | `#C8102E` | Ações principais |
-| Dourado brasão | `#D4A537` | Codinomes e destaques |
-| Fuselagem | `#F4F6F8` | Fundo |
-| Hangar | `#5B6770` | Texto secundário |
-| Verde | `#2E8B57` | Confirmado / disponível |
-| Âmbar | `#D99A00` | Aguardando / manutenção |
+Estilo iOS: fundo escuro com brilhos, cartões de vidro fosco, títulos grandes, ícones "de app"
+com gradiente e barra de abas flutuante. Paleta tirada do brasão do GOA (`public/brasao-goa.png`):
 
-Aproximação feita sem acesso ao Manual de Identidade Visual do CBMRO; ajustar pelos valores oficiais.
+| Nome | Hex | Origem no brasão | Uso |
+|---|---|---|---|
+| Noite | `#050E1F` | — | Fundo |
+| Vermelho | `#E0242B` | Anel | Ações principais, helicóptero |
+| Azul | `#2F6BDB` | Bandeira de RO | Links, avião, progresso |
+| Amarelo | `#F7D117` | Bandeira de RO | Equipe da SESAU |
+| Verde | `#22B35A` | Bandeira de RO | Confirmado / disponível |
+| Dourado | `#E2B04A` | Águia | Codinomes |
 
 ## Rodar
 

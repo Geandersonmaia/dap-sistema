@@ -31,18 +31,18 @@ export const TIPOS_MISSAO = [
 ];
 
 export const STATUS_MEMBRO = {
-  pendente: { rotulo: "Não enviado", cor: "bg-goa-linha text-goa-hangar" },
-  enviado: { rotulo: "Aguardando", cor: "bg-amber-100 text-amber-800" },
-  confirmado: { rotulo: "Confirmado", cor: "bg-emerald-100 text-emerald-800" },
-  recusou: { rotulo: "Não pode", cor: "bg-red-100 text-red-800" },
-  substituido: { rotulo: "Substituído", cor: "bg-goa-linha text-goa-hangar line-through" },
+  pendente: { rotulo: "Não enviado", cor: "bg-white/10 text-goa-suave" },
+  enviado: { rotulo: "Aguardando", cor: "bg-goa-ambar/15 text-goa-ambar" },
+  confirmado: { rotulo: "Confirmado", cor: "bg-goa-verde/15 text-emerald-300" },
+  recusou: { rotulo: "Não pode", cor: "bg-goa-vermelho/20 text-red-300" },
+  substituido: { rotulo: "Substituído", cor: "bg-white/5 text-goa-suave line-through" },
 };
 
 export const STATUS_MISSAO = {
-  acionada: { rotulo: "Acionada", cor: "bg-amber-100 text-amber-800" },
-  pronta: { rotulo: "Equipe pronta", cor: "bg-emerald-100 text-emerald-800" },
-  concluida: { rotulo: "Concluída", cor: "bg-goa-linha text-goa-hangar" },
-  cancelada: { rotulo: "Cancelada", cor: "bg-red-100 text-red-800" },
+  acionada: { rotulo: "Acionada", cor: "bg-goa-ambar/15 text-goa-ambar" },
+  pronta: { rotulo: "Equipe pronta", cor: "bg-goa-verde/15 text-emerald-300" },
+  concluida: { rotulo: "Concluída", cor: "bg-white/10 text-goa-suave" },
+  cancelada: { rotulo: "Cancelada", cor: "bg-goa-vermelho/20 text-red-300" },
 };
 
 export function dataHora(valor) {

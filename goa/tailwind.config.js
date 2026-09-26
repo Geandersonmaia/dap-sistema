@@ -4,24 +4,30 @@ module.exports = {
   theme: {
     extend: {
       colors: {
-        // Paleta Projeto Goa: CBMRO + aviação
+        // Paleta tirada do brasão do GOA/CBMRO
         goa: {
-          noite: "#0E2238", // céu noturno / cabine: cabeçalho e fundos escuros
-          noite2: "#17324F",
-          vermelho: "#C8102E", // vermelho bombeiro: ações principais
-          vermelhoEsc: "#9E0C24",
-          dourado: "#D4A537", // dourado do brasão: destaques e codinomes
-          fuselagem: "#F4F6F8", // branco de fuselagem: fundo do app
-          hangar: "#5B6770", // cinza hangar: textos secundários
-          linha: "#DCE1E6",
-          verde: "#2E8B57", // confirmado / disponível
-          ambar: "#D99A00", // aguardando / manutenção
+          noite: "#050E1F", // fundo (céu noturno)
+          noite2: "#0B1A36",
+          vermelho: "#E0242B", // anel do brasão
+          vermelhoEsc: "#B81A20",
+          azul: "#2F6BDB", // azul da bandeira de Rondônia (versão luminosa)
+          amarelo: "#F7D117", // amarelo da bandeira
+          verde: "#22B35A", // verde da bandeira
+          dourado: "#E2B04A", // águia
+          ambar: "#F5A524",
+          texto: "#F2F5FB",
+          suave: "#9AA7BF", // texto secundário
         },
       },
       fontFamily: {
-        display: ['"Barlow Condensed"', '"Arial Narrow"', "Arial", "sans-serif"],
-        sans: ['"IBM Plex Sans"', "system-ui", "-apple-system", '"Segoe UI"', "sans-serif"],
+        sans: ["-apple-system", "BlinkMacSystemFont", '"SF Pro Text"', "Inter", "system-ui", "sans-serif"],
+        display: ["-apple-system", "BlinkMacSystemFont", '"SF Pro Display"', "Inter", "system-ui", "sans-serif"],
       },
+      borderRadius: { ios: "22px" },
+      keyframes: {
+        flutuar: { "0%,100%": { transform: "translateY(0)" }, "50%": { transform: "translateY(-4px)" } },
+      },
+      animation: { flutuar: "flutuar 5s ease-in-out infinite" },
     },
   },
   plugins: [],

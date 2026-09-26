@@ -2,27 +2,68 @@
 @tailwind components;
 @tailwind utilities;
 
+:root {
+  color-scheme: dark;
+}
+
+html,
 body {
-  @apply bg-goa-fuselagem text-goa-noite font-sans antialiased;
+  @apply bg-goa-noite text-goa-texto font-sans antialiased;
+  -webkit-tap-highlight-color: transparent;
+}
+
+/* Fundo com brilhos nas cores do brasão */
+body::before {
+  content: "";
+  position: fixed;
+  inset: 0;
+  z-index: -1;
+  background:
+    radial-gradient(60% 40% at 10% 0%, rgba(47, 107, 219, 0.35), transparent 70%),
+    radial-gradient(50% 35% at 100% 15%, rgba(224, 36, 43, 0.22), transparent 70%),
+    radial-gradient(60% 40% at 50% 100%, rgba(34, 179, 90, 0.14), transparent 70%),
+    linear-gradient(180deg, #071430 0%, #050e1f 55%, #040a17 100%);
 }
 
 @layer components {
+  /* Vidro fosco no estilo iOS */
+  .vidro {
+    @apply rounded-ios border border-white/10 bg-white/[0.06] backdrop-blur-2xl;
+    box-shadow: 0 1px 0 rgba(255, 255, 255, 0.08) inset, 0 12px 32px -12px rgba(0, 0, 0, 0.6);
+  }
   .cartao {
-    @apply rounded-xl bg-white border border-goa-linha p-4;
+    @apply vidro p-4;
   }
   .rotulo {
-    @apply text-xs font-medium uppercase tracking-wider text-goa-hangar;
+    @apply text-[13px] font-semibold uppercase tracking-wide text-goa-suave;
   }
   .campo {
-    @apply w-full rounded-lg border border-goa-linha bg-white px-3 py-2.5 text-base focus:outline-none focus:ring-2 focus:ring-goa-noite2;
+    @apply w-full rounded-xl border border-white/10 bg-white/[0.07] px-3.5 py-3 text-[17px] text-goa-texto placeholder:text-goa-suave/60 focus:border-goa-azul/60 focus:outline-none focus:ring-2 focus:ring-goa-azul/40;
+  }
+  select.campo option {
+    @apply bg-goa-noite2;
   }
   .botao {
-    @apply inline-flex items-center justify-center gap-2 rounded-lg bg-goa-vermelho px-4 py-3 font-semibold text-white active:bg-goa-vermelhoEsc disabled:opacity-50;
+    @apply inline-flex items-center justify-center gap-2 rounded-2xl px-4 py-3.5 text-[17px] font-semibold text-white transition active:scale-[0.97] disabled:opacity-40;
+    background: linear-gradient(180deg, #f03a41 0%, #c81d24 100%);
+    box-shadow: 0 10px 24px -8px rgba(224, 36, 43, 0.7), 0 1px 0 rgba(255, 255, 255, 0.25) inset;
   }
   .botao-sec {
-    @apply inline-flex items-center justify-center gap-2 rounded-lg border border-goa-linha bg-white px-4 py-3 font-medium text-goa-noite active:bg-goa-fuselagem;
+    @apply inline-flex items-center justify-center gap-2 rounded-2xl border border-white/10 bg-white/[0.08] px-4 py-3.5 text-[17px] font-medium text-goa-texto backdrop-blur-xl transition active:scale-[0.97] disabled:opacity-40;
   }
   .selo {
-    @apply inline-block rounded-full px-2.5 py-0.5 text-xs font-medium;
+    @apply inline-flex items-center gap-1 rounded-full px-2.5 py-1 text-xs font-semibold;
+  }
+  /* Ícone "de app" do iOS: quadrado arredondado com gradiente */
+  .icone-app {
+    @apply grid place-items-center rounded-[18px] text-white;
+    box-shadow: 0 10px 22px -8px rgba(0, 0, 0, 0.7), 0 1px 0 rgba(255, 255, 255, 0.3) inset;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .animate-flutuar,
+  .animate-pulse {
+    animation: none !important;
   }
 }

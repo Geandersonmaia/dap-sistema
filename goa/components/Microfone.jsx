@@ -1,10 +1,11 @@
 "use client";
 
 import { useEffect, useRef, useState } from "react";
+import Icone from "./Icone";
 
 // Ditado por voz do próprio navegador (Chrome no Android, Safari no iPhone).
 // Cada trecho reconhecido é entregue em onTexto.
-export default function Microfone({ onTexto, grande = false, rotulo = "Ditar" }) {
+export default function Microfone({ onTexto, rotulo = "Ditar por voz" }) {
   const [suportado, setSuportado] = useState(true);
   const [ouvindo, setOuvindo] = useState(false);
   const rec = useRef(null);
@@ -41,27 +42,13 @@ export default function Microfone({ onTexto, grande = false, rotulo = "Ditar" })
       onClick={alternar}
       aria-pressed={ouvindo}
       aria-label={rotulo || "Ditar por voz"}
-      className={
-        grande
-          ? `flex w-full items-center justify-center gap-3 rounded-xl py-4 font-semibold text-white ${
-              ouvindo ? "bg-goa-vermelho animate-pulse" : "bg-goa-noite"
-            }`
-          : `shrink-0 rounded-lg border px-3 text-sm ${
-              ouvindo ? "border-goa-vermelho bg-red-50 text-goa-vermelho" : "border-goa-linha bg-white text-goa-hangar"
-            }`
-      }
+      className={`grid h-[50px] w-[50px] shrink-0 place-items-center rounded-full border transition active:scale-90 ${
+        ouvindo
+          ? "animate-pulse border-goa-vermelho bg-goa-vermelho text-white shadow-[0_0_20px_rgba(224,36,43,.7)]"
+          : "border-white/10 bg-white/[0.08] text-goa-azul"
+      }`}
     >
-      <IconeMic />
-      {ouvindo ? "Ouvindo… toque para parar" : rotulo}
+      <Icone nome="microfone" className="h-5 w-5" traco={2} />
     </button>
-  );
-}
-
-function IconeMic() {
-  return (
-    <svg viewBox="0 0 24 24" className="h-5 w-5" fill="none" stroke="currentColor" strokeWidth="2" aria-hidden="true">
-      <rect x="9" y="3" width="6" height="11" rx="3" />
-      <path d="M5 11a7 7 0 0 0 14 0M12 18v3" strokeLinecap="round" />
-    </svg>
   );
 }

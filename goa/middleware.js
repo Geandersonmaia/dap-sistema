@@ -7,5 +7,5 @@ export function middleware(request) {
 }
 
 export const config = {
-  matcher: ["/((?!login|_next|manifest.json|icon.svg|favicon.ico).*)"],
+  matcher: ["/((?!login|_next|manifest.json|icon-|brasao-goa|favicon.ico).*)"],
 };

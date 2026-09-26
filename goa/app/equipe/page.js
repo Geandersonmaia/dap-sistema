@@ -1,5 +1,7 @@
-import Moldura from "@/components/Moldura";
+import { IconeAeronave } from "@/components/Aeronave";
 import CadastroPessoa from "@/components/CadastroPessoa";
+import Moldura from "@/components/Moldura";
+import SeletorSituacao from "@/components/SeletorSituacao";
 import { sql } from "@/lib/db";
 import { FUNCOES } from "@/lib/formato";
 import { alternarAtivo, mudarSituacaoAeronave } from "./actions";
@@ -11,50 +13,56 @@ export default async function Equipe() {
     sql`select * from pessoas order by ativo desc, orgao, nome`,
     sql`select * from aeronaves order by codinome`,
   ]);
+  const ativas = pessoas.filter((p) => p.ativo).length;
   return (
-    <Moldura titulo="Equipe e aeronaves" ativo="/equipe">
+    <Moldura titulo="Equipe" subtitulo={ativas === 1 ? "1 pessoa ativa" : `${ativas} pessoas ativas`} ativo="/equipe">
       <CadastroPessoa />
 
       <section className="flex flex-col gap-2">
-        <h2 className="rotulo">Pessoas cadastradas ({pessoas.filter((p) => p.ativo).length} ativas)</h2>
-        {pessoas.length === 0 && <p className="text-sm text-goa-hangar">Ninguém cadastrado ainda.</p>}
-        {pessoas.map((p) => (
-          <div key={p.id} className={`cartao flex items-center justify-between gap-3 py-3 ${p.ativo ? "" : "opacity-50"}`}>
-            <div className="min-w-0">
-              <p className="truncate font-medium">{[p.posto, p.nome].filter(Boolean).join(" ")}</p>
-              <p className="text-xs text-goa-hangar">
-                {p.funcoes.map((f) => FUNCOES[f] || f).join(", ")} · {p.orgao}
-                {p.whatsapp ? ` · ${p.whatsapp}` : " · sem WhatsApp"}
-              </p>
+        <h2 className="rotulo px-1">Pessoas</h2>
+        <div className="vidro divide-y divide-white/10 overflow-hidden">
+          {pessoas.length === 0 && <p className="p-4 text-[15px] text-goa-suave">Ninguém cadastrado ainda.</p>}
+          {pessoas.map((p) => (
+            <div key={p.id} className={`flex items-center gap-3 px-4 py-3 ${p.ativo ? "" : "opacity-40"}`}>
+              <span
+                className={`grid h-10 w-10 shrink-0 place-items-center rounded-full text-[13px] font-bold ${
+                  p.orgao === "SESAU" ? "bg-goa-amarelo/20 text-goa-amarelo" : "bg-goa-vermelho/20 text-red-300"
+                }`}
+              >
+                {p.orgao === "SESAU" ? "SES" : "BM"}
+              </span>
+              <div className="min-w-0 flex-1">
+                <p className="truncate text-[17px] font-medium">{[p.posto, p.nome].filter(Boolean).join(" ")}</p>
+                <p className="truncate text-[13px] text-goa-suave">
+                  {p.funcoes.map((f) => FUNCOES[f] || f).join(", ")}
+                  {p.whatsapp ? ` · ${p.whatsapp}` : " · sem WhatsApp"}
+                </p>
+              </div>
+              <form action={alternarAtivo.bind(null, p.id)}>
+                <button className="text-[13px] font-medium text-goa-azul">{p.ativo ? "Desativar" : "Reativar"}</button>
+              </form>
             </div>
-            <form action={alternarAtivo.bind(null, p.id)}>
-              <button className="text-xs text-goa-hangar underline">{p.ativo ? "Desativar" : "Reativar"}</button>
-            </form>
-          </div>
-        ))}
+          ))}
+        </div>
       </section>
 
-      <section className="flex flex-col gap-2">
-        <h2 className="rotulo">Aeronaves</h2>
-        {aeronaves.map((a) => (
-          <div key={a.id} className="cartao flex items-center justify-between gap-3 py-3">
-            <div>
-              <p className="font-display text-lg font-semibold leading-none">
-                {a.codinome} · <span className="text-goa-hangar">{a.matricula}</span>
-              </p>
-              <p className="text-xs text-goa-hangar">{a.modelo}</p>
-            </div>
-            <form action={mudarSituacaoAeronave} className="flex items-center gap-1">
+      <section id="aeronaves" className="flex scroll-mt-16 flex-col gap-2">
+        <h2 className="rotulo px-1">Aeronaves</h2>
+        <div className="vidro divide-y divide-white/10 overflow-hidden">
+          {aeronaves.map((a) => (
+            <form key={a.id} action={mudarSituacaoAeronave} className="flex items-center gap-3 px-4 py-3">
+              <IconeAeronave tipo={a.tipo} className="h-11 w-11" />
+              <div className="min-w-0 flex-1">
+                <p className="whitespace-nowrap text-[17px] font-semibold leading-tight">{a.codinome}</p>
+                <p className="truncate text-[13px] text-goa-suave">
+                  {a.matricula} · {a.modelo}
+                </p>
+              </div>
               <input type="hidden" name="id" value={a.id} />
-              <select name="situacao" defaultValue={a.situacao} className="campo w-auto py-1.5 text-sm" aria-label={`Situação ${a.codinome}`}>
-                <option value="disponivel">Disponível</option>
-                <option value="manutencao">Manutenção</option>
-                <option value="indisponivel">Indisponível</option>
-              </select>
-              <button className="botao-sec px-2 py-1.5 text-sm">OK</button>
+              <SeletorSituacao situacao={a.situacao} rotulo={`Situação ${a.codinome}`} />
             </form>
-          </div>
-        ))}
+          ))}
+        </div>
       </section>
     </Moldura>
   );

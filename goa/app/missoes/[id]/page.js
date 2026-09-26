@@ -9,7 +9,7 @@ export default async function Missao({ params }) {
   const id = Number(params.id);
   const [[missao], equipe, pessoas] = await Promise.all([
     sql`
-      select m.*, a.codinome, a.matricula, a.modelo
+      select m.*, a.codinome, a.matricula, a.modelo, a.tipo as tipo_aeronave
       from missoes m left join aeronaves a on a.id = m.aeronave_id
       where m.id = ${id}`,
     sql`
@@ -23,7 +23,7 @@ export default async function Missao({ params }) {
   if (!missao) notFound();
 
   return (
-    <Moldura titulo={`Missão ${missao.numero}`} voltar="/">
+    <Moldura titulo={`Missão ${missao.numero}`} subtitulo={missao.tipo} voltar="/">
       <PainelMissao missao={JSON.parse(JSON.stringify(missao))} equipe={JSON.parse(JSON.stringify(equipe))} pessoas={pessoas} />
     </Moldura>
   );

@@ -10,7 +10,7 @@ export default async function NovaMissao() {
     sql`select id, nome, posto, funcoes from pessoas where ativo order by nome`,
   ]);
   return (
-    <Moldura titulo="Nova missão" ativo="/missoes/nova" voltar="/">
+    <Moldura titulo="Nova missão" subtitulo="Preencha ou dite pelo microfone" voltar="/">
       <FormMissao aeronaves={aeronaves} pessoas={pessoas} />
     </Moldura>
   );
