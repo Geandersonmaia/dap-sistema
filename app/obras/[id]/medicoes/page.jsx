@@ -9,8 +9,9 @@ import Kpi from "@/components/obras/Kpi";
 import { Campo, inputClasse, botaoPrimario } from "@/components/obras/Campo";
 import { chamarAPI, useObra } from "@/hooks/useObra";
 import { formatarBRL, formatarData, formatarPct } from "@/lib/obras/calculos";
+import { TIPOS_RECEITA, TIPO_RECEITA_LABEL } from "@/lib/obras/constants";
 
-const VAZIO = { numero: "", data: "", valor: "", data_pagamento: "", observacao: "" };
+const VAZIO = { tipo: "medicao", numero: "", data: "", valor: "", tributos_retidos: "", glosa: "", data_pagamento: "", observacao: "" };
 
 export default function MedicoesPage({ params }) {
   const { dados, erro, recarregar } = useObra(params.id);
@@ -55,21 +56,36 @@ export default function MedicoesPage({ params }) {
             Cada boletim de medição aprovado pelo órgão é a receita da obra. Informe o valor medido e, quando cair na conta, a data do pagamento.
           </p>
           <div className="grid grid-cols-2 gap-4 lg:grid-cols-4">
-            <Kpi titulo="Total medido" valor={formatarBRL(a.receitaMedida)} cor="azul" />
+            <Kpi titulo="Receita total (− glosas)" valor={formatarBRL(a.receitaMedida)} cor="azul" />
             <Kpi titulo="Executado" valor={formatarPct(a.execucao)} subtitulo={`de ${formatarBRL(a.valorContrato)}`} />
             <Kpi titulo="Recebido" valor={formatarBRL(a.receitaRecebida)} cor="verde" />
             <Kpi titulo="A receber" valor={formatarBRL(a.receitaMedida - a.receitaRecebida)} cor="cinza" />
           </div>
 
-          <form onSubmit={adicionar} className="grid grid-cols-2 items-end gap-3 rounded-xl border border-gray-200 bg-white p-5 shadow-sm md:grid-cols-5">
+          <form onSubmit={adicionar} className="grid grid-cols-2 items-start gap-3 rounded-xl border border-gray-200 bg-white p-5 shadow-sm md:grid-cols-4">
+            <Campo label="Tipo">
+              <select className={inputClasse} value={form.tipo} onChange={set("tipo")}>
+                {TIPOS_RECEITA.map((t) => (
+                  <option key={t.valor} value={t.valor}>
+                    {t.label}
+                  </option>
+                ))}
+              </select>
+            </Campo>
             <Campo label="Nº da medição">
               <input className={inputClasse} value={form.numero} onChange={set("numero")} placeholder="3ª" />
             </Campo>
             <Campo label="Data (fim do período) *">
               <input type="date" required className={inputClasse} value={form.data} onChange={set("data")} />
             </Campo>
-            <Campo label="Valor medido (R$) *">
+            <Campo label="Valor bruto (R$) *" dica="Antes das retenções.">
               <input required inputMode="decimal" className={inputClasse} value={form.valor} onChange={set("valor")} />
+            </Campo>
+            <Campo label="Tributos retidos (R$)" dica="ISS, INSS, IR etc. retidos pelo órgão.">
+              <input inputMode="decimal" className={inputClasse} value={form.tributos_retidos} onChange={set("tributos_retidos")} />
+            </Campo>
+            <Campo label="Glosa / multa descontada (R$)">
+              <input inputMode="decimal" className={inputClasse} value={form.glosa} onChange={set("glosa")} />
             </Campo>
             <Campo label="Pago em">
               <input type="date" className={inputClasse} value={form.data_pagamento} onChange={set("data_pagamento")} />
@@ -87,9 +103,12 @@ export default function MedicoesPage({ params }) {
             exportFilename={`medicoes-obra-${params.id}`}
             data={dados.medicoes}
             columns={[
-              { key: "numero", label: "Medição" },
+              { key: "tipo", label: "Tipo", render: (m) => TIPO_RECEITA_LABEL[m.tipo] || "Medição", csvValue: (m) => TIPO_RECEITA_LABEL[m.tipo] || "Medição" },
+              { key: "numero", label: "Nº" },
               { key: "data", label: "Data", render: (m) => formatarData(m.data) },
-              { key: "valor", label: "Valor", render: (m) => formatarBRL(m.valor) },
+              { key: "valor", label: "Valor bruto", render: (m) => formatarBRL(m.valor) },
+              { key: "tributos_retidos", label: "Tributos retidos", render: (m) => (m.tributos_retidos ? formatarBRL(m.tributos_retidos) : "—") },
+              { key: "glosa", label: "Glosa", render: (m) => (m.glosa ? formatarBRL(m.glosa) : "—") },
               {
                 key: "data_pagamento",
                 label: "Pagamento",

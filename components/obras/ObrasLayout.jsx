@@ -14,6 +14,7 @@ function menuDaObra(id) {
     { href: `${base}/orcamento`, label: "Orçamento contratado", icone: "📐" },
     { href: `${base}/medicoes`, label: "Medições (receita)", icone: "💵" },
     { href: `${base}/relatorio`, label: "Relatório de reequilíbrio", icone: "⚖️" },
+    { href: `${base}/apuracao`, label: "Apuração do lucro", icone: "🧮" },
     { href: `${base}/contrato`, label: "Dados do contrato", icone: "📄" },
   ];
 }

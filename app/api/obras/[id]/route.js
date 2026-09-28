@@ -1,4 +1,4 @@
-import { analisarObra } from "@/lib/obras/calculos";
+import { analisarObra, apurarLucro } from "@/lib/obras/calculos";
 import { atualizarObra, buscarObra, excluirObra } from "@/lib/obras/repositorio";
 import { idValido, lerJSON, responder } from "@/lib/obras/api";
 
@@ -12,6 +12,7 @@ export async function GET(_request, { params }) {
     return {
       ...dados,
       analise: analisarObra(dados.obra, dados.itens, dados.lancamentos, dados.medicoes),
+      apuracao: apurarLucro(dados.obra, dados.lancamentos, dados.medicoes),
       atualizadoEm: new Date().toISOString(),
     };
   });

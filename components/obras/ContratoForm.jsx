@@ -15,6 +15,7 @@ const VAZIO = {
   data_base: "",
   data_inicio: "",
   prazo_meses: "",
+  participacao_lucro_percent: "",
 };
 
 export default function ContratoForm({ inicial, onSalvar, textoBotao = "Salvar" }) {
@@ -76,6 +77,9 @@ export default function ContratoForm({ inicial, onSalvar, textoBotao = "Salvar" 
         </Campo>
         <Campo label="Prazo (meses)">
           <input inputMode="numeric" className={inputClasse} value={form.prazo_meses} onChange={set("prazo_meses")} />
+        </Campo>
+        <Campo label="Participação sobre o lucro (%)" dica="Remuneração variável de assessoria sobre o lucro apurado (ex.: 10). Deixe vazio se não houver.">
+          <input inputMode="decimal" className={inputClasse} value={form.participacao_lucro_percent} onChange={set("participacao_lucro_percent")} placeholder="10" />
         </Campo>
       </div>
       {erro && <p className="rounded-lg bg-red-50 px-3 py-2 text-sm text-red-700">{erro}</p>}

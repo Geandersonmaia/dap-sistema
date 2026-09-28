@@ -32,6 +32,7 @@ function novoForm(anterior) {
     valor_total: "",
     fornecedor: anterior?.fornecedor || "",
     documento: "",
+    data_pagamento: "",
     observacao: "",
   };
 }
@@ -135,13 +136,21 @@ function FormLancamento({ obraId, itens, onSalvo }) {
         <Campo label="Nota fiscal / recibo">
           <input className={inputClasse} value={form.documento} onChange={(e) => set("documento", e.target.value)} placeholder="NF 12345" />
         </Campo>
-        <Campo label="Observação" className="col-span-2 md:col-span-4">
+        <Campo label="Pago em" dica="Data do pagamento (comprovante).">
+          <input type="date" className={inputClasse} value={form.data_pagamento} onChange={(e) => set("data_pagamento", e.target.value)} />
+        </Campo>
+        <Campo label="Observação" className="col-span-2 md:col-span-3">
           <input className={inputClasse} value={form.observacao} onChange={(e) => set("observacao", e.target.value)} />
         </Campo>
       </div>
       {variacao !== null && (
         <p className={`rounded-lg px-3 py-2 text-sm ${variacao > 0.05 ? "bg-red-50 text-red-800" : "bg-green-50 text-green-800"}`}>
           {variacao > 0 ? "▲" : "▼"} Preço {Math.abs(variacao * 100).toFixed(1)}% {variacao > 0 ? "acima" : "abaixo"} do orçado ({formatarBRL(item.preco_unitario)}/{item.unidade || "un"})
+        </p>
+      )}
+      {!form.documento.trim() && form.categoria !== "nao_dedutivel" && (
+        <p className="rounded-lg bg-amber-50 px-3 py-2 text-xs text-amber-900">
+          ⚠️ Sem nota fiscal/recibo este gasto aparece no lucrômetro, mas <b>não é deduzido na apuração do lucro</b> (custo sem documento idôneo).
         </p>
       )}
       {msg && <p className={`rounded-lg px-3 py-2 text-sm ${msg.ok ? "bg-green-50 text-green-800" : "bg-red-50 text-red-700"}`}>{msg.texto}</p>}
@@ -210,7 +219,13 @@ export default function LancamentosPage({ params }) {
               },
               { key: "valor_total", label: "Total", render: (l) => formatarBRL(l.valor_total) },
               { key: "fornecedor", label: "Fornecedor" },
-              { key: "documento", label: "NF/Recibo" },
+              {
+                key: "documento",
+                label: "NF/Recibo",
+                render: (l) => l.documento || <span className="text-amber-700">⚠️ sem documento</span>,
+                csvValue: (l) => l.documento || "",
+              },
+              { key: "data_pagamento", label: "Pago em", render: (l) => formatarData(l.data_pagamento) },
               {
                 key: "acoes",
                 label: "",

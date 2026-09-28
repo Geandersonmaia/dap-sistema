@@ -243,6 +243,24 @@ Itens que ficaram mais baratos entram negativos (o órgão vai compensar, então
 sistema já compensa). Consumo acima do orçado **não** entra no valor — gera
 alerta, porque perda/desperdício não é coberto por reequilíbrio.
 
+## Apuração do lucro da obra (participação sobre o lucro)
+
+Página **Apuração do lucro**: demonstrativo acumulado por trimestre, no formato
+**P = máximo [0; R − T − CD − CI]** e **H = % de participação × P**
+(percentual configurado em "Dados do contrato").
+
+- **R** — só medições/reajustes/reequilíbrios/aditivos/retenções liberadas **pagos**
+  (campo "Pago em"), pelo valor bruto, menos glosas.
+- **T** — tributos retidos informados em cada medição + gastos na categoria
+  "Tributos sobre a receita".
+- **CD** — materiais, mão de obra, equipamentos, terceirizados, administração
+  da obra e outros custos (fretes, seguros, canteiro).
+- **CI** — categoria "Custos indiretos (rateio aceito por escrito)".
+- Gastos **sem nota fiscal/recibo não são deduzidos**; categoria
+  "Não dedutível" (juros, multas, honorários) fica fora.
+- Mostra o prazo de entrega de cada demonstrativo trimestral
+  (20º dia útil após o trimestre, sem considerar feriados).
+
 O texto de fundamentação do relatório (CF art. 37, XXI; Lei 14.133/2021 art.
 124, II, "d"; Lei 8.666/1993 art. 65, II, "d") é uma base — o advogado deve
 revisar e juntar as provas do fato superveniente.
