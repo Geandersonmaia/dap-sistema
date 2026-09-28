@@ -189,3 +189,60 @@ public/
 - O chat de IA busca os dados das bases a cada pergunta; com o volume atual
   isso é rápido.
 - Sessão expira automaticamente após 30 minutos de inatividade.
+
+---
+
+# 🏗️ Módulo Controle de Obras (custos, lucrômetro e reequilíbrio)
+
+Painel para a construtora lançar **todos os gastos da obra** (ferro, cimento,
+mão de obra, equipamentos…) e ver, a qualquer momento, se está tendo lucro ou
+prejuízo — e gerar o **relatório de desequilíbrio econômico-financeiro** para
+o pedido de reequilíbrio junto ao órgão.
+
+Acesso: `/obras` (também aparece no menu lateral como "Controle de Obras").
+Usa o mesmo login Google + `ALLOWED_EMAILS`.
+
+## Configuração (uma vez)
+
+O módulo guarda os dados num banco **Postgres** (o Notion não serve bem para
+milhares de lançamentos). O jeito mais simples:
+
+1. Na Vercel: projeto → **Storage** → **Create Database** → **Neon (Postgres)** → conectar ao projeto.
+   Isso cria sozinho a variável `DATABASE_URL`.
+   (Ou crie um banco em [neon.tech](https://neon.tech) e adicione `DATABASE_URL` à mão em Settings → Environment Variables.)
+2. **Redeploy**.
+3. Pronto — as tabelas são criadas automaticamente no primeiro acesso.
+
+## Como usar
+
+1. **Nova obra** → dados do contrato: valor global, BDI, data-base da proposta
+   e o reajuste contratual já concedido (ex.: INCC).
+2. **Orçamento contratado** → os insumos/serviços da planilha, com os preços
+   da proposta **sem BDI**. Dá para colar direto do Excel
+   (Código · Descrição · Unidade · Quantidade · Preço unitário · [Categoria]).
+3. **Medições** → cada boletim aprovado pelo órgão (é a receita).
+4. **Lançar gastos** → toda nota fiscal, folha, aluguel. **Vincule ao item do
+   orçamento** sempre que possível: é isso que prova a alta de preço.
+5. **Painel** → lucrômetro atual, lucrômetro projetado, alertas, gráficos e a
+   tabela preço orçado × preço pago.
+6. **Relatório de reequilíbrio** → documento pronto para imprimir/salvar em PDF,
+   com anexo das notas fiscais.
+
+## Como os números são calculados
+
+| Indicador | Fórmula |
+|---|---|
+| Margem atual (lucrômetro) | (receita medida − custo real) ÷ receita medida |
+| Margem prevista | (valor do contrato − custo direto orçado) ÷ valor do contrato |
+| Estouro de custo | custo real − custo orçado × % executado |
+| Projeção no fim | custo real + (quantidade que falta de cada item × preço pago hoje) |
+| Impacto de preço (por item) | (preço médio pago − preço orçado × (1 + reajuste)) × quantidade |
+| Reequilíbrio estimado | Σ impacto projetado de todos os itens × (1 + BDI) |
+
+Itens que ficaram mais baratos entram negativos (o órgão vai compensar, então o
+sistema já compensa). Consumo acima do orçado **não** entra no valor — gera
+alerta, porque perda/desperdício não é coberto por reequilíbrio.
+
+O texto de fundamentação do relatório (CF art. 37, XXI; Lei 14.133/2021 art.
+124, II, "d"; Lei 8.666/1993 art. 65, II, "d") é uma base — o advogado deve
+revisar e juntar as provas do fato superveniente.

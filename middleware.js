@@ -18,5 +18,11 @@ export async function middleware(request) {
 }
 
 export const config = {
-  matcher: ["/painel/:path*", "/api/bi/:path*", "/api/chat/:path*"],
+  matcher: [
+    "/painel/:path*",
+    "/obras/:path*",
+    "/api/bi/:path*",
+    "/api/chat/:path*",
+    "/api/obras/:path*",
+  ],
 };

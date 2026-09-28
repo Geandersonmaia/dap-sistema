@@ -12,6 +12,7 @@ const ITENS_MENU = [
   { href: "/painel/liquidacoes", label: "Liquidação", icone: "💰" },
   { href: "/painel/fornecedores", label: "Fornecedores", icone: "🏢" },
   { href: "/painel/relatorios", label: "Relatórios", icone: "📈" },
+  { href: "/obras", label: "Controle de Obras", icone: "🏗️" },
 ];
 
 export default function Sidebar({ aberta, onClose }) {
